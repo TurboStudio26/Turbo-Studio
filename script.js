@@ -254,27 +254,27 @@ if (fontMinus) {
 
     });
 }
-
 /* ============================
    FORMULÁRIO TURBOSTUDIO
 ============================ */
 const form = document.getElementById("contactForm");
 const formMessage = document.getElementById("formMessage");
-
 if (form && formMessage) {
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
-        const name = document.getElementById("name").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const service = document.getElementById("service").value;
-        const message = document.getElementById("message").value.trim();
+        const name = document.getElementById("name")?.value.trim();
+        const email = document.getElementById("email")?.value.trim();
+        const service = document.getElementById("service")?.value;
+        const message = document.getElementById("message")?.value.trim();
         const submitButton = form.querySelector('[type="submit"]');
         if (!name || !email || !service || !message) {
             formMessage.textContent = "Preencha todos os campos.";
             return;
         }
-        submitButton.disabled = true;
-        submitButton.textContent = "Enviando...";
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = "Enviando...";
+        }
         formMessage.textContent = "";
         try {
             const resposta = await fetch(
@@ -286,16 +286,16 @@ if (form && formMessage) {
                         "Accept": "application/json"
                     },
                     body: JSON.stringify({
-                        name: name,
-                        email: email,
-                        service: service,
-                        message: message,
+                        name,
+                        email,
+                        service,
+                        message,
                         _subject: "Nova solicitação - Turbo Studio"
                     })
                 }
             );
             const resultado = await resposta.json();
-            if (!resposta.ok || resultado.success !== "true") {
+            if (!resposta.ok || resultado.success === false) {
                 throw new Error("Não foi possível enviar a solicitação.");
             }
             formMessage.textContent =
@@ -306,8 +306,10 @@ if (form && formMessage) {
             formMessage.textContent =
                 "Não foi possível enviar. Verifique sua conexão e tente novamente.";
         } finally {
-            submitButton.disabled = false;
-            submitButton.textContent = "Preparar solicitação";
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = "Preparar solicitação";
+            }
         }
     });
 }
