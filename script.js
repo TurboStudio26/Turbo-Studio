@@ -254,76 +254,31 @@ if (fontMinus) {
 
     });
 }
+
 /* ============================
-   FORMULÁRIO TURBO STUDIO
-   Supabase + FormSubmit
+   FORMULÁRIO TURBOSTUDIO
 ============================ */
 const form = document.getElementById("contactForm");
-const SUPABASE_URL =
-    "https://msfehhtxujkzwiwoquxf.supabase.co";
-const SUPABASE_KEY =
-    "sb_publishable_IRw2CckrpiS1q7tfoTuBlQ_yNKOemIP";
-const EMAIL_DESTINO =
-    "suporte.turbostudio@gmail.com";
-if (form) {
-    let formMessage = document.getElementById("formMessage");
-    if (!formMessage) {
-        formMessage = document.createElement("p");
-        formMessage.id = "formMessage";
-        formMessage.setAttribute("role", "status");
-        formMessage.setAttribute("aria-live", "polite");
-        form.appendChild(formMessage);
-    }
+const formMessage = document.getElementById("formMessage");
+
+if (form && formMessage) {
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
-        const nome =
-            document.getElementById("name").value.trim();
-        const email =
-            document.getElementById("email").value.trim();
-        const servico =
-            document.getElementById("service").value;
-        const mensagem =
-            document.getElementById("message").value.trim();
-        if (!nome || !email || !servico || !mensagem) {
-            formMessage.textContent =
-                "Preencha todos os campos antes de enviar.";
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const service = document.getElementById("service").value;
+        const message = document.getElementById("message").value.trim();
+        const submitButton = form.querySelector('[type="submit"]');
+        if (!name || !email || !service || !message) {
+            formMessage.textContent = "Preencha todos os campos.";
             return;
         }
-        const botao = form.querySelector('[type="submit"]');
-        const textoOriginal = botao.textContent;
-        botao.disabled = true;
-        botao.textContent = "Enviando...";
+        submitButton.disabled = true;
+        submitButton.textContent = "Enviando...";
         formMessage.textContent = "";
-        let salvoNoBanco = false;
         try {
-            // 1. Salvar a solicitação no Supabase
-            const respostaBanco = await fetch(
-                `${SUPABASE_URL}/rest/v1/agendamentos`,
-                {
-                    method: "POST",
-                    headers: {
-                        "apikey": SUPABASE_KEY,
-                        "Authorization": `Bearer ${SUPABASE_KEY}`,
-                        "Content-Type": "application/json",
-                        "Prefer": "return=minimal"
-                    },
-                    body: JSON.stringify({
-                        nome: nome,
-                        email: email,
-                        servico: servico,
-                        observacoes: mensagem
-                    })
-                }
-            );
-            if (!respostaBanco.ok) {
-                const detalhe = await respostaBanco.text();
-                console.error("Erro Supabase:", detalhe);
-                throw new Error("Falha ao salvar no banco.");
-            }
-            salvoNoBanco = true;
-            // 2. Enviar a solicitação por e-mail
-            const respostaEmail = await fetch(
-                `https://formsubmit.co/ajax/${encodeURIComponent(EMAIL_DESTINO)}`,
+            const resposta = await fetch(
+                "https://formsubmit.co/ajax/support.turbostudio@gmail.com",
                 {
                     method: "POST",
                     headers: {
@@ -331,28 +286,28 @@ if (form) {
                         "Accept": "application/json"
                     },
                     body: JSON.stringify({
-                        _subject: "Nova solicitação - Turbo Studio",
-                        _template: "table",
-                        _captcha: "false",
-                        nome: nome,
+                        name: name,
                         email: email,
-                        servico: servico,
-                        mensagem: mensagem
+                        service: service,
+                        message: message,
+                        _subject: "Nova solicitação - Turbo Studio"
                     })
                 }
             );
-        const resultadoEmail = await respostaEmail.json();
-console.log("Resposta completa do FormSubmit:", resultadoEmail);
-if (!respostaEmail.ok || resultadoEmail.success !== "true") {
-    throw new Error(
-        resultadoEmail.message ||
-        resultadoEmail.error ||
-        "Falha no envio do e-mail."
-    );
-}
+            const resultado = await resposta.json();
+            if (!resposta.ok || resultado.success !== "true") {
+                throw new Error("Não foi possível enviar a solicitação.");
+            }
+            formMessage.textContent =
+                "Solicitação enviada com sucesso! Nossa equipe entrará em contato.";
+            form.reset();
+        } catch (erro) {
+            console.error("Erro no formulário:", erro);
+            formMessage.textContent =
+                "Não foi possível enviar. Verifique sua conexão e tente novamente.";
         } finally {
-            botao.disabled = false;
-            botao.textContent = textoOriginal;
+            submitButton.disabled = false;
+            submitButton.textContent = "Preparar solicitação";
         }
     });
 }
