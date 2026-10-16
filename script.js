@@ -278,7 +278,7 @@ if (form && formMessage) {
         formMessage.textContent = "";
         try {
             const resposta = await fetch(
-                "https://formsubmit.co/ajax/support.turbostudio@gmail.com",
+                "https://formsubmit.co/ajax/suporte.turbostudio@gmail.com",
                 {
                     method: "POST",
                     headers: {
