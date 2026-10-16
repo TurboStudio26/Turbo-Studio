@@ -1,130 +1,69 @@
 /* ============================
    MENU MOBILE
 ============================ */
-
-const menuToggle =
-    document.getElementById("menuToggle");
-
-const mainNav =
-    document.getElementById("mainNav");
-
-
-menuToggle.addEventListener("click", () => {
-
-    const opened =
-        mainNav.classList.toggle("open");
-
-    menuToggle.setAttribute(
-        "aria-expanded",
-        opened
-    );
-
-    menuToggle.setAttribute(
-        "aria-label",
-        opened
-            ? "Fechar menu"
-            : "Abrir menu"
-    );
-
-});
-/* fecha o menu ao clicar */
-
-document.querySelectorAll(".nav a")
-    .forEach(link => {
-
-        link.addEventListener("click", () => {
-
-            mainNav.classList.remove("open");
-
-            menuToggle.setAttribute(
-                "aria-expanded",
-                "false"
-            );
-
-            menuToggle.setAttribute(
-                "aria-label",
-                "Abrir menu"
-            );
-
-        });
-
+const menuToggle = document.getElementById("menuToggle");
+const mainNav = document.getElementById("mainNav");
+if (menuToggle && mainNav) {
+    menuToggle.addEventListener("click", () => {
+        const opened = mainNav.classList.toggle("open");
+        menuToggle.setAttribute("aria-expanded", String(opened));
+        menuToggle.setAttribute(
+            "aria-label",
+            opened ? "Fechar menu" : "Abrir menu"
+        );
     });
-
-
+    document.querySelectorAll(".nav a").forEach(link => {
+        link.addEventListener("click", () => {
+            mainNav.classList.remove("open");
+            menuToggle.setAttribute("aria-expanded", "false");
+            menuToggle.setAttribute("aria-label", "Abrir menu");
+        });
+    });
+}
 /* ============================
    ANIMAÇÕES DE ENTRADA
 ============================ */
-
 const revealElements =
     document.querySelectorAll(".reveal");
-
-
 const observer =
     new IntersectionObserver(
-
         entries => {
-
             entries.forEach(entry => {
-
                 if (entry.isIntersecting) {
-
                     entry.target.classList.add("active");
-
                     observer.unobserve(
                         entry.target
                     );
-
                 }
-
             });
-
         },
-
         {
             threshold: .12
         }
 
     );
-
-
 revealElements.forEach(element => {
-
     observer.observe(element);
-
 });
-
-
 /* ============================
    NÚMEROS ANIMADOS
 ============================ */
-
 const numbers =
     document.querySelectorAll("[data-number]");
-
-
 const numberObserver =
     new IntersectionObserver(
-
         entries => {
-
             entries.forEach(entry => {
-
                 if (!entry.isIntersecting)
                     return;
-
-
                 const element =
                     entry.target;
-
                 const target =
                     Number(
                         element.dataset.number
                     );
-
                 let current = 0;
-
                 const duration = 1500;
-
                 const steps =
                     Math.max(
                         1,
@@ -132,89 +71,50 @@ const numberObserver =
                             duration / 20
                         )
                     );
-
                 const increment =
                     target / steps;
-
-
                 const counter =
                     setInterval(() => {
-
                         current += increment;
-
                         if (current >= target) {
-
                             current = target;
-
                             clearInterval(counter);
-
                         }
-
                         element.textContent =
                             Math.floor(current)
                             .toLocaleString("pt-BR");
-
                     }, 20);
-
-
                 numberObserver.unobserve(
                     element
                 );
-
             });
-
         },
-
         {
             threshold: .5
         }
-
     );
-
-
 numbers.forEach(number => {
-
     numberObserver.observe(number);
-
 });
-
-
 /* ============================
    BOTÃO VOLTAR AO TOPO
 ============================ */
-
-const topBtn =
-    document.getElementById("topBtn");
-
-
-window.addEventListener("scroll", () => {
-
-    if (window.scrollY > 500) {
-
-        topBtn.classList.add("show");
-
-    } else {
-
-        topBtn.classList.remove("show");
-
-    }
-
-});
-
-
-topBtn.addEventListener("click", () => {
-
-    window.scrollTo({
-
-        top: 0,
-
-        behavior: "smooth"
-
+const topBtn = document.getElementById("topBtn");
+if (topBtn) {
+    window.addEventListener("scroll", () => {
+        if (window.scrollY > 500) {
+            topBtn.classList.add("show");
+        } else {
+            topBtn.classList.remove("show");
+        }
     });
-
-});
-
-
+    topBtn.addEventListener("click", () => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    });
+}
 /* ============================
    ALTO CONTRASTE
 ============================ */
