@@ -602,26 +602,55 @@ blockquote {
     font-weight: 900;
     letter-spacing: 1px;
 }
-
-/* FEEDBACKS */
-.testimonials { background: #0A0A0A; }
-.testimonial-grid {
+/* =========================================
+   FEEDBACKS — ANIMAÇÃO VERTICAL INFINITA
+========================================= */
+.testimonials {
+    background: #0A0A0A;
+}
+.testimonial-viewport {
+    position: relative;
+    height: 570px;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        black 12%,
+        black 88%,
+        transparent 100%
+    );
+    mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        black 12%,
+        black 88%,
+        transparent 100%
+    );
+}
+.testimonial-track {
+    display: flex;
+    flex-direction: column;
+    animation: feedbackScroll 40s linear infinite;
+    will-change: transform;
+}
+.testimonial-list {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px;
+    padding-bottom: 20px;
 }
 .testimonial {
     min-width: 0;
+    width: 100%;
     padding: 30px;
     background: linear-gradient(145deg, #1A1A1A, #101010);
     border: 1px solid #303030;
     border-radius: 9px;
-    transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease;
+    transition: border-color .35s ease, box-shadow .35s ease;
 }
 .testimonial:hover {
-    transform: translateY(-7px);
     border-color: var(--turbo-orange);
-    box-shadow: 0 12px 30px rgba(255,90,31,.09);
+    box-shadow: 0 12px 30px rgba(255,90,31,.12);
 }
 .stars {
     margin-bottom: 20px;
@@ -638,8 +667,8 @@ blockquote {
     align-items: center;
     gap: 12px;
 }
-.client-photo,
-.avatar {
+
+.client-photo {
     display: block;
     flex-shrink: 0;
     width: 48px;
@@ -647,19 +676,64 @@ blockquote {
     object-fit: cover;
     border: 2px solid #393939;
     border-radius: 50%;
-    background: #222;
-    transition: filter .3s ease, border-color .3s ease, transform .3s ease;
-}
-.testimonial:hover .client-photo {
-    filter: grayscale(0%);
-    border-color: var(--turbo-orange);
-    transform: scale(1.04);
 }
 .client strong,
-.client span { display: block; }
-.client strong { color: #fff; font-size: 13px; }
-.client span { color: #AAA; font-size: 11px; }
+.client span {
+    display: block;
+}
+.client strong {
+    color: #fff;
+    font-size: 13px;
+}
 
+.client span {
+    color: #AAA;
+    font-size: 11px;
+}
+/* MOVIMENTO CONTÍNUO */
+@keyframes feedbackScroll {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(-50%);
+    }
+}
+/* PAUSA AO PASSAR O MOUSE */
+.testimonial-viewport:hover .testimonial-track {
+    animation-play-state: paused;
+}
+/* CELULARES */
+
+@media (max-width: 800px) {
+    .testimonial-viewport {
+        height: 520px;
+    }
+    .testimonial-list {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        padding-bottom: 18px;
+    }
+    .testimonial-track {
+        animation-duration: 45s;
+    }
+}
+
+/* ACESSIBILIDADE */
+@media (prefers-reduced-motion: reduce) {
+    .testimonial-viewport {
+        height: auto;
+        overflow: visible;
+        mask-image: none;
+        -webkit-mask-image: none;
+    }
+    .testimonial-track {
+        animation: none;
+    }
+    .testimonial-list[aria-hidden="true"] {
+        display: none;
+    }
+}
 /* CHAMADA PARA AGENDAMENTO */
 .cta {
     padding: 78px 0;
@@ -806,7 +880,6 @@ blockquote {
     margin: 4px auto;
     font-size: 11px;
 }
-
 /* BOTÃO VOLTAR AO TOPO */
 .top-btn {
     position: fixed;
@@ -943,9 +1016,7 @@ blockquote {
         scroll-behavior: auto !important;
     }
 }
-
 /* WHATSAPP PREMIUM — TURBO STUDIO */
-
 .whatsapp-float {
     position: fixed;
     right: 25px;
